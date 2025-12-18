@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
-import { Search, Bell, Trophy, ExternalLink, Calendar, LayoutGrid, Zap } from 'lucide-react';
+import { Search, Bell, Trophy, ExternalLink, Calendar, LayoutGrid, Zap, Filter } from 'lucide-react';
 
 export default function App() {
   const contests = [
@@ -11,83 +11,90 @@ export default function App() {
   ];
 
   useEffect(() => {
-    // 사진처럼 부드럽게 나타나는 애니메이션
-    gsap.from(".fade-in", { opacity: 0, y: 20, stagger: 0.15, duration: 0.8, ease: "power2.out" });
+    // 1. 초기 상태 설정: 애니메이션 전에는 살짝 아래에 있고 투명하게
+    gsap.set(".fade-in", { opacity: 0, y: 30 });
+
+    // 2. 애니메이션 실행: 위로 올라오면서 선명해짐 (끝난 뒤 상태 유지)
+    gsap.to(".fade-in", { 
+      opacity: 1, 
+      y: 0, 
+      stagger: 0.2, 
+      duration: 1, 
+      ease: "power4.out",
+      delay: 0.5 // 화면 로딩 후 자연스럽게 시작
+    });
   }, []);
 
   return (
-    <div className="min-h-screen bg-dark text-white neon-gradient">
-      {/* 상단 네비게이션 바 */}
+    <div className="min-h-screen bg-[#0a0a0a] text-white neon-gradient pb-20">
+      {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-dark/50 backdrop-blur-xl border-b border-white/5">
         <div className="flex items-center gap-3">
-          <LayoutGrid size={22} className="text-neon" /> {/* 로고 아이콘 변경 */}
-          <span className="text-lg font-black tracking-tighter">CHALLENGE HUB</span>
+          <LayoutGrid size={22} className="text-[#00E0FF]" />
+          <span className="text-lg font-black tracking-tighter uppercase">Challenge Hub</span>
         </div>
-        {/* 사진 속 메뉴 스타일 */}
         <div className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
           {['Dashboard', 'Discover', 'Community'].map((item, idx) => (
-            <button key={item} className={`px-5 py-2 text-sm font-bold rounded-full transition-all ${idx === 0 ? 'bg-neon text-dark shadow-neon-glow' : 'text-slate-400 hover:text-white'}`}>
+            <button key={item} className={`px-5 py-2 text-sm font-bold rounded-full transition-all ${idx === 0 ? 'bg-[#00E0FF] text-black' : 'text-slate-400 hover:text-white'}`}>
               {item}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-4">
-          <div className="p-2.5 border border-white/10 rounded-xl hover:bg-white/5 cursor-pointer text-slate-400"><Search size={18}/></div>
-          <div className="relative p-2.5 border border-white/10 rounded-xl hover:bg-white/5 cursor-pointer text-slate-400">
-            <Bell size={18}/><div className="absolute top-2 right-2 w-2 h-2 bg-neon rounded-full shadow-neon-glow"></div>
+          <Search size={18} className="text-slate-400 cursor-pointer" />
+          <div className="w-10 h-10 bg-gradient-to-tr from-[#00E0FF] to-blue-400 rounded-2xl flex items-center justify-center">
+            <User size={20} className="text-black" />
           </div>
         </div>
       </nav>
 
-      {/* 메인 콘텐츠 영역 */}
-      <main className="pt-28 pb-20 container mx-auto px-6">
-        {/* 히어로 섹션 */}
-        <div className="mb-20 text-center max-w-3xl mx-auto">
-          <div className="fade-in inline-flex items-center gap-2 px-4 py-1.5 bg-neon/10 border border-neon/30 rounded-full mb-6 text-xs font-extrabold text-neon tracking-wider">
-            <Zap size={12} fill="currentColor"/> NEW SEASON OPENED
+      {/* Main Content */}
+      <main className="pt-32 container mx-auto px-6">
+        {/* Hero Section */}
+        <div className="mb-20 text-center fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#00E0FF]/10 border border-[#00E0FF]/30 rounded-full mb-6 text-xs font-extrabold text-[#00E0FF]">
+            <Zap size={12} fill="currentColor"/> LIVE UPDATES
           </div>
-          <h1 className="fade-in text-5xl md:text-7xl font-black mb-6 tracking-tight leading-none">
-            Unlock Your <br/><span className="text-neon drop-shadow-[0_0_15px_rgba(0,224,255,0.5)]">Potential.</span>
+          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-none">
+            Find Your Next <br/><span className="text-[#00E0FF]">Big Challenge.</span>
           </h1>
-          <p className="fade-in text-slate-400 text-lg">가장 트렌디한 공모전 아카이브. 당신의 커리어를 빛낼 기회를 발견하세요.</p>
         </div>
 
-        {/* 대시보드 헤더 */}
-        <div className="fade-in flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold flex items-center gap-2">🔥 실시간 인기 공모전</h2>
-          <button className="text-sm font-bold text-neon hover:underline flex items-center gap-1">
-            View All <ExternalLink size={14}/>
+        {/* Dashboard Header */}
+        <div className="flex justify-between items-end mb-10 fade-in border-b border-white/5 pb-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">🔥 인기 공모전</h2>
+            <p className="text-slate-500 text-sm">현재 가장 주목받는 기회들입니다</p>
+          </div>
+          <button className="px-5 py-2.5 bg-white/5 rounded-xl text-sm font-bold border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-all">
+            <Filter size={16}/> Filter
           </button>
         </div>
 
-        {/* 공모전 카드 그리드 (사진 스타일 적용) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Contest Grid - 이 부분이 이제 사라지지 않습니다 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {contests.map((item) => (
-            <div key={item.id} className="fade-in group bg-card border border-white/5 rounded-[2rem] overflow-hidden hover:border-neon/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(0,224,255,0.1)]">
+            <div key={item.id} className="fade-in group bg-[#121212] border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-[#00E0FF]/40 transition-all duration-500 shadow-xl">
               <div className="h-48 overflow-hidden relative">
-                <img src={item.img} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                {/* 카테고리 뱃지 */}
-                <div className="absolute top-4 left-4 px-3 py-1.5 bg-dark/80 backdrop-blur rounded-full text-[10px] font-black text-neon border border-neon/20 uppercase tracking-wider">
+                <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] font-black text-[#00E0FF] border border-[#00E0FF]/20 uppercase">
                   {item.category}
                 </div>
               </div>
-              <div className="p-6">
-                {/* D-Day 및 주최사 */}
+              <div className="p-7">
                 <div className="flex justify-between items-center mb-3">
                   <div className="flex items-center gap-1.5 text-rose-500 font-black">
                     <Calendar size={14}/> <span className="text-xs">{item.dDay}</span>
                   </div>
-                  <span className="text-[11px] text-slate-500 font-bold uppercase">{item.host}</span>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase">{item.host}</span>
                 </div>
-                {/* 제목 */}
-                <h3 className="text-lg font-bold mb-6 line-clamp-2 leading-tight group-hover:text-neon transition-colors">{item.title}</h3>
-                {/* 상금 및 버튼 */}
+                <h3 className="text-lg font-bold mb-6 line-clamp-2 leading-tight group-hover:text-[#00E0FF] transition-colors">{item.title}</h3>
                 <div className="flex items-center justify-between pt-5 border-t border-white/5">
                   <div className="flex items-center gap-2">
                     <Trophy size={16} className="text-yellow-400" />
                     <span className="text-sm font-black">{item.prize}</span>
                   </div>
-                  <button className="p-2.5 bg-white/5 rounded-xl group-hover:bg-neon group-hover:text-dark transition-all">
+                  <button className="p-2.5 bg-white/5 rounded-xl group-hover:bg-[#00E0FF] group-hover:text-black transition-all">
                     <ExternalLink size={16}/>
                   </button>
                 </div>
@@ -97,5 +104,14 @@ export default function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+// 아이콘을 위한 User 컴포넌트 추가
+function User({ size, className }: { size: number, className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
   );
 }
