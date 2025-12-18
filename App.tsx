@@ -1,121 +1,72 @@
+import React, { useEffect } from 'react';
+import { gsap } from 'gsap';
+import { Search, User, Calendar, Trophy, ExternalLink } from 'lucide-react';
 
-import React, { useState, useMemo } from 'react';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import FilterBar from './components/FilterBar';
-import ContestCard from './components/ContestCard';
-import WinnersSection from './components/WinnersSection';
-import CommunitySection from './components/CommunitySection';
-import RoadmapSection from './components/RoadmapSection';
-import MembershipSection from './components/MembershipSection';
-import Footer from './components/Footer';
-import CustomCursor from './components/CustomCursor';
-import { SAMPLE_CONTESTS } from './data/sampleData';
-import { Category } from './types';
+// --- 하위 컴포넌트들을 여기에 다 합쳤습니다 (폴더 필요 없음) ---
+const Header = () => (
+  <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/10">
+    <div className="text-2xl font-bold tracking-tighter text-[#007BFF]">CHALLENGE HUB</div>
+    <nav className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+      {['전체', '디자인', '기획', 'IT/SW'].map((item) => (
+        <a key={item} href="#" className="hover:text-[#007BFF] transition-colors">{item}</a>
+      ))}
+    </nav>
+    <div className="flex items-center gap-4">
+      <button className="p-2 hover:bg-white/5 rounded-full"><Search size={20} /></button>
+      <button className="p-2 bg-[#007BFF] rounded-full text-white"><User size={20} /></button>
+    </div>
+  </header>
+);
 
-const App: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<Category>(Category.ALL);
-  const [searchQuery, setSearchQuery] = useState('');
+const ContestCard = ({ item }) => (
+  <div className="contest-card group bg-white/5 rounded-3xl overflow-hidden border border-white/10 transition-all hover:border-[#007BFF]/50">
+    <div className="aspect-[4/3] overflow-hidden">
+      <img src={item.img} alt={item.title} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+    </div>
+    <div className="p-6">
+      <div className="flex justify-between items-start mb-3">
+        <span className="text-xs text-rose-500 font-bold">{item.dDay}</span>
+        <span className="text-xs text-slate-500">{item.host}</span>
+      </div>
+      <h4 className="text-lg font-bold mb-4 line-clamp-1 group-hover:text-[#007BFF]">{item.title}</h4>
+      <div className="flex items-center justify-between border-t border-white/10 mt-2 pt-2">
+        <span className="text-sm font-medium flex items-center gap-1 text-slate-300"><Trophy size={14}/> {item.prize}</span>
+        <button className="text-[#007BFF]"><ExternalLink size={18}/></button>
+      </div>
+    </div>
+  </div>
+);
 
-  const featuredContests = useMemo(() => 
-    SAMPLE_CONTESTS.filter(c => c.isFeatured), 
-  []);
+// --- 메인 페이지 ---
+export default function App() {
+  const contests = [
+    { id: 1, title: "AI 서비스 아이디어 공모전", host: "구글", dDay: "D-15", prize: "1,000만원", img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400" },
+    { id: 2, title: "캐릭터 디자인 어워즈", host: "라인", dDay: "D-7", prize: "500만원", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400" },
+    { id: 3, title: "문화 마케팅 전략 공모전", host: "문체부", dDay: "D-21", prize: "300만원", img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400" },
+    { id: 4, title: "에코 시티 공공디자인", host: "서울시", dDay: "D-12", prize: "700만원", img: "https://images.unsplash.com/photo-1449156059586-7620ad1b927b?w=400" },
+  ];
 
-  const filteredContests = useMemo(() => {
-    return SAMPLE_CONTESTS.filter((contest) => {
-      const matchesCategory = activeCategory === Category.ALL || contest.category === activeCategory;
-      const matchesSearch = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            contest.host.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [activeCategory, searchQuery]);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleNavChange = (cat: Category) => {
-    if (cat === Category.WINNER) {
-      scrollToSection('winners');
-    } else if (cat === Category.COMMUNITY) {
-      scrollToSection('community');
-    } else if (cat === Category.ROADMAP) {
-      scrollToSection('roadmap');
-    } else if (cat === Category.PERKS) {
-      scrollToSection('perks');
-    } else {
-      setActiveCategory(cat);
-      scrollToSection('contest-list');
-    }
-  };
+  useEffect(() => {
+    gsap.to(".hero-card", { y: -20, duration: 2, repeat: -1, yoyo: true, ease: "power1.inOut", stagger: 0.3 });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-[#007BFF] selection:text-white cursor-none">
-      <CustomCursor />
-      
-      <Header 
-        activeCategory={activeCategory} 
-        onCategoryChange={handleNavChange} 
-      />
-
-      <main className="relative z-10">
-        <Hero featuredContests={featuredContests} />
-
-        <div className="relative -mt-20 z-20">
-          <FilterBar 
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
-
-          <section id="contest-list" className="max-w-7xl mx-auto px-4 pb-32">
-            <div className="flex items-end justify-between mb-12 border-b border-white/5 pb-8">
-              <div>
-                <h2 className="text-4xl font-black text-white tracking-tighter">
-                  {activeCategory === Category.ALL ? 'EXPLORE ALL' : activeCategory.toUpperCase()}
-                </h2>
-                <p className="text-slate-500 font-medium mt-2">당신에게 영감을 줄 2025년의 새로운 도전들을 만나보세요.</p>
-              </div>
-              <div className="bg-slate-900 border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-[#007BFF] animate-ping"></span>
-                <span className="text-xs font-black text-slate-400 uppercase">{filteredContests.length} Challenges Found</span>
-              </div>
-            </div>
-
-            {filteredContests.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredContests.map((contest) => (
-                  <ContestCard key={contest.id} contest={contest} />
-                ))}
-              </div>
-            ) : (
-              <div className="py-40 text-center bg-slate-900/20 backdrop-blur-md rounded-[3rem] border border-dashed border-white/10">
-                <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-10 h-10 text-slate-600">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-black text-white tracking-tighter">NO RESULTS FOUND</h3>
-                <p className="text-slate-500 mt-2 font-medium">검색 결과가 없습니다. 다른 키워드를 입력해보세요.</p>
-              </div>
-            )}
-          </section>
-
-          {/* Core Sections */}
-          <RoadmapSection />
-          <WinnersSection />
-          <MembershipSection />
-          <CommunitySection />
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Header />
+      <section className="py-20 text-center">
+        <h1 className="text-5xl font-extrabold mb-6">당신의 도전을 <span className="text-[#007BFF]">현실</span>로.</h1>
+        <div className="flex justify-center gap-6 mt-10">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="hero-card w-48 h-60 bg-white/10 rounded-2xl border border-white/20"></div>
+          ))}
         </div>
-      </main>
-
-      <Footer />
+      </section>
+      <section className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {contests.map(item => <ContestCard key={item.id} item={item} />)}
+      </section>
+      <footer className="py-10 text-center text-slate-500 border-t border-white/10 mt-20">
+        © 2025 Challenge Hub.
+      </footer>
     </div>
   );
-};
-
-export default App;
+}
