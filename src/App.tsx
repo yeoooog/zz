@@ -1,3 +1,4 @@
+import './index.css'; // 이 줄이 있어야 디자인이 입혀집니다!
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Search, User, Calendar, Trophy, ExternalLink } from 'lucide-react';
