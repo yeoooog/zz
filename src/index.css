@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  background-color: #0a0a0a;
-  color: white;
-  font-family: sans-serif;
+/* 전체 배경 및 폰트 설정 */
+@layer base {
+  body {
+    @apply bg-dark text-white antialiased font-sans;
+  }
+  /* 스크롤바 다크 모드 적용 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-dark;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-800 rounded-full hover:bg-slate-700;
+  }
+}
+
+/* 은은한 네온 빛 배경 효과 */
+.neon-gradient {
+  background: radial-gradient(circle at 50% 0%, rgba(0, 224, 255, 0.08) 0%, transparent 60%);
 }
